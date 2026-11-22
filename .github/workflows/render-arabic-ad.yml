@@ -1,0 +1,65 @@
+---
+name: Render ArabicAd
+
+# Test render of the Arabic 9:16 composition on GitHub's runner,
+# so the heavy install (monorepo + browser) never touches local disk.
+# Free for this public fork. Triggered by pushing this file, by changing
+# the ArabicAd composition, or manually from the Actions tab.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/render-arabic-ad.yml'
+      - 'packages/example/src/ArabicAd/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-arabic-ad
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: 1
+  TURBO_TELEMETRY_DISABLED: 1
+  TURBO_NO_UPDATE_NOTIFIER: 1
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 25
+      - uses: oven-sh/setup-bun@3d267786b128fe76c2f16a390aa2448b815359f3 # v2.1.2
+        with:
+          bun-version: 1.4.3
+      - name: Install Arabic fonts (Tajawal + Noto Sans Arabic)
+        run: |
+          mkdir -p ~/.fonts
+          curl -fsSL -L -o ~/.fonts/Tajawal.ttf "https://github.com/google/fonts/raw/main/ofl/tajawal/Tajawal%5Bwght%5D.ttf"
+          curl -fsSL -L -o ~/.fonts/NotoSansArabic.ttf "https://github.com/google/fonts/raw/main/ofl/notosansarabic/NotoSansArabic%5Bwdth%2Cwght%5D.ttf"
+          fc-cache -f ~/.fonts
+          fc-list | grep -i -E "tajawal|noto sans arabic" || echo "font check: no match in fc-list"
+      - name: Install dependencies
+        run: bun ci
+      - name: Build example dependencies
+        run: bunx turbo run make --filter=@remotion/example... --concurrency=2 --no-update-notifier
+      - name: Ensure Remotion browser
+        working-directory: packages/example
+        run: bunx remotion browser ensure
+      - name: Render ArabicAd (15s test, free license)
+        working-directory: packages/example
+        run: bunx remotion render ArabicAd out/arabic-ad.mp4 --license-key=free-license --is-production=false
+      - name: Upload rendered video
+        uses: actions/upload-artifact@v4
+        with:
+          name: arabic-ad
+          path: packages/example/out/arabic-ad.mp4
+          retention-days: 7
+---
