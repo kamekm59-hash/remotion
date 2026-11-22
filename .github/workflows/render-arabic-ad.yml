@@ -42,7 +42,9 @@ jobs:
       - name: Install Arabic fonts (Tajawal + Noto Sans Arabic)
         run: |
           mkdir -p ~/.fonts
-          curl -fsSL -L -o ~/.fonts/Tajawal.ttf "https://github.com/google/fonts/raw/main/ofl/tajawal/Tajawal%5Bwght%5D.ttf"
+          curl -fsSL -L -o ~/.fonts/Tajawal-Regular.ttf "https://github.com/google/fonts/raw/main/ofl/tajawal/Tajawal-Regular.ttf"
+          curl -fsSL -L -o ~/.fonts/Tajawal-Bold.ttf "https://github.com/google/fonts/raw/main/ofl/tajawal/Tajawal-Bold.ttf"
+          curl -fsSL -L -o ~/.fonts/Tajawal-ExtraBold.ttf "https://github.com/google/fonts/raw/main/ofl/tajawal/Tajawal-ExtraBold.ttf"
           curl -fsSL -L -o ~/.fonts/NotoSansArabic.ttf "https://github.com/google/fonts/raw/main/ofl/notosansarabic/NotoSansArabic%5Bwdth%2Cwght%5D.ttf"
           fc-cache -f ~/.fonts
           fc-list | grep -i -E "tajawal|noto sans arabic" || echo "font check: no match in fc-list"
