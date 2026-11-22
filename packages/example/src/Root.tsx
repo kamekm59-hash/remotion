@@ -293,6 +293,7 @@ import {MediaTimelineTestbed} from './MediaTimelineTestbed';
 import {MixBlendMode} from './MixBlendMode/MixBlendMode';
 import {NewAudioExample} from './NewAudio/NewAudio';
 import {NewVideoComp, PremountSequenceVideoComp} from './NewVideo';
+import {ArabicAd} from './ArabicAd/ArabicAd';
 import {SimultaneousPlaybackComp} from './NewVideo/SimultaneousPlayback';
 import {ObjectFitTestComp} from './ObjectFitTest';
 import {ChangingTrimBeforeValue} from './OffthreadRemoteVideo/ChangingTrimBefore';
@@ -499,7 +500,8 @@ export const Index: React.FC = () => {
 
 	return (
 		<>
-			<Composition
+			<Folder name="ArabicAd"><ArabicAd /></Folder>
+      <Composition
 				id="CommittedRenderHolds"
 				component={CommittedRenderHolds}
 				durationInFrames={COMMITTED_HOLDS_DURATION}
